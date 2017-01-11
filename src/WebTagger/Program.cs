@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Autofac;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,7 +35,21 @@ namespace WebTagger
                 }
             };
 
-            new JobProcessor().ProcessJob(job).Wait();
+            var container = SetupIOC();
+            container.Resolve<JobProcessor>().ProcessJob(job).Wait();
+        }
+
+        private static IContainer SetupIOC()
+        {
+            var builder = new ContainerBuilder();
+
+            builder.RegisterType<JobRepository>().AsImplementedInterfaces();
+            builder.RegisterType<TagRepository>().AsImplementedInterfaces();
+            builder.RegisterType<HttpWrapper>().AsImplementedInterfaces();
+
+            builder.RegisterType<JobProcessor>();
+
+            return builder.Build();
         }
     }
 }

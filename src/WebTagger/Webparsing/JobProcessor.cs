@@ -9,11 +9,19 @@ namespace WebTagger.Webparsing
 {
     public class JobProcessor
     {
-        private static HttpClient httpClient = new HttpClient();
+        
 
-        public JobProcessor()
+        private readonly ITagRepository tagRepository;
+        private readonly IJobRepository jobRepository;
+        private readonly IHttpWrapper httpWrapper;
+
+        public JobProcessor(ITagRepository tagRepository,
+                            IJobRepository jobRepository,
+                            IHttpWrapper httpWrapper)
         {
-            
+            this.tagRepository = tagRepository;
+            this.jobRepository = jobRepository;
+            this.httpWrapper = httpWrapper;
         }
 
         public async Task ProcessJob(Job job)
@@ -23,10 +31,10 @@ namespace WebTagger.Webparsing
                 return;
             }
 
-            var html = await httpClient.GetStringAsync(job.url);
+            var html = await httpWrapper.GetPageContent(job.url);
             var pageParser = new Pageparser(html);
-                        
-            foreach(var selection in job.selections)
+
+            foreach (var selection in job.selections)
             {
                 List<string> values;
 
@@ -44,15 +52,15 @@ namespace WebTagger.Webparsing
                     continue;
                 }
 
-                foreach(var value in values)
+                foreach (var value in values)
                 {
-                    if(selection.output == OutputType.Tag)
+                    if (selection.output == OutputType.Tag)
                     {
-
+                        tagRepository.AddOrUpdateTag(job.url, selection.tagname, value, job.replace);
                     }
                     else
                     {
-
+                        jobRepository.RegisterAdhocJob(value, selection.jobName);
                     }
                 }
             }

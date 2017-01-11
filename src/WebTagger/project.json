@@ -5,6 +5,7 @@
   },
 
   "dependencies": {
+    "Autofac": "4.2.1",
     "HtmlAgilityPack.CssSelectors.NetCore": "1.0.0",
     "HtmlAgilityPack.NetCore": "1.5.0.1",
     "log4net": "2.0.7",
