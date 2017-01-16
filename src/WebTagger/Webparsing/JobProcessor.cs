@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using WebTagger.Configuration;
+using WebTagger.Db;
 using WebTagger.Jobs;
-using WebTagger.Jobs.Configuration;
 
 namespace WebTagger.Webparsing
 {

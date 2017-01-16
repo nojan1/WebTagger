@@ -1,4 +1,4 @@
-﻿namespace WebTagger.Jobs
+﻿namespace WebTagger.Db
 {
     public interface ITagRepository
     {

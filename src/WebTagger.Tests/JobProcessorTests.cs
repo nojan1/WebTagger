@@ -1,10 +1,12 @@
-﻿using Moq;
+﻿using Microsoft.Extensions.Configuration;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebTagger.Configuration;
+using WebTagger.Db;
 using WebTagger.Jobs;
-using WebTagger.Jobs.Configuration;
 using WebTagger.Webparsing;
 using Xunit;
 

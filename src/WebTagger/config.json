@@ -1,4 +1,5 @@
 ﻿{
+  "connectionString": "Filename=./webtagger.db",
   "interval": "1m",
   "jobs": [
     {

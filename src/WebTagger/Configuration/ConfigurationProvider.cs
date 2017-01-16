@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WebTagger.Jobs.Configuration
+namespace WebTagger.Configuration
 {
     public class ConfigurationProvider : IConfigurationProvider
     {
@@ -23,6 +23,8 @@ namespace WebTagger.Jobs.Configuration
         {
             get; private set;
         }
+
+        public string ConnectionString { get; private set; }
 
         public void AddConfigFile(string filename)
         {
@@ -48,6 +50,11 @@ namespace WebTagger.Jobs.Configuration
             if (!string.IsNullOrWhiteSpace(model.Interval))
             {
                 DelayBetweenJobCycle = ConvertToTimeSpan(model.Interval);
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.ConnectionString))
+            {
+                ConnectionString = model.ConnectionString;
             }
         }
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebTagger.Jobs.Configuration;
+using WebTagger.Configuration;
 
 namespace WebTagger.Jobs
 {

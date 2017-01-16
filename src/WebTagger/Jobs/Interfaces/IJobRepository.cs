@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using WebTagger.Jobs.Configuration;
+using WebTagger.Configuration;
 
 namespace WebTagger.Jobs
 {

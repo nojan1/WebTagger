@@ -1,10 +1,12 @@
 ﻿using Autofac;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebTagger.Configuration;
+using WebTagger.Db;
 using WebTagger.Jobs;
-using WebTagger.Jobs.Configuration;
 using WebTagger.Webparsing;
 
 namespace WebTagger
@@ -53,6 +55,8 @@ namespace WebTagger
             var builder = new ContainerBuilder();
 
             builder.RegisterType<ConfigurationProvider>().AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<SqliteContextProvider>().AsImplementedInterfaces();
+
             builder.RegisterType<JobRepository>().AsImplementedInterfaces();
             builder.RegisterType<TagRepository>().AsImplementedInterfaces();
             builder.RegisterType<HttpWrapper>().AsImplementedInterfaces();
@@ -71,6 +75,11 @@ namespace WebTagger
             parser.ParseCommandLine(args);
 
             return commandLineArgumets;
+        }
+
+        public static void SetupDB(string connectionString)
+        {
+            
         }
     }
 }
