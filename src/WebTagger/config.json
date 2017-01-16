@@ -5,6 +5,7 @@
     {
       "name": "test",
       "url": "https://brax.nu/",
+      "replace": true,
       "selections": [
         {
           "output": "tag",

@@ -42,6 +42,11 @@ namespace WebTagger.Webparsing
                 var html = await httpWrapper.GetPageContent(job.Url);
                 var pageParser = new Pageparser(html);
 
+                if (job.Replace)
+                {
+                    tagRepository.Clear(job.Url);
+                }
+
                 foreach (var selection in job.Selections)
                 {
                     List<string> values;
@@ -64,7 +69,7 @@ namespace WebTagger.Webparsing
                     {
                         if (selection.Output == OutputType.Tag)
                         {
-                            tagRepository.AddOrUpdateTag(job.Url, selection.TagName, value, job.Replace);
+                            tagRepository.AddTag(job.Url, selection.TagName, value);
                         }
                         else
                         {

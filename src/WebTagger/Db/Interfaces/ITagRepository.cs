@@ -2,6 +2,7 @@
 {
     public interface ITagRepository
     {
-        void AddOrUpdateTag(string url, string name, string value, bool update);
+        void AddTag(string url, string name, string value);
+        void Clear(string url);
     }
 }
