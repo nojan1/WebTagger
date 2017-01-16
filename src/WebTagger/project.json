@@ -4,7 +4,6 @@
     "emitEntryPoint": true,
     "copyToOutput": {
       "includeFiles": [
-        "Jobs/Configuration/configuration-schema.json",
         "config.json"
       ]
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -10,7 +11,7 @@ namespace WebTagger.Webparsing
 {
     public class JobProcessor
     {
-        
+        private static ILog logger = LogManager.GetLogger(typeof(JobProcessor)); 
 
         private readonly ITagRepository tagRepository;
         private readonly IJobRepository jobRepository;
@@ -35,38 +36,45 @@ namespace WebTagger.Webparsing
                 return;
             }
 
-            var html = await httpWrapper.GetPageContent(job.Url);
-            var pageParser = new Pageparser(html);
-
-            foreach (var selection in job.Selections)
+            try
             {
-                List<string> values;
+                var html = await httpWrapper.GetPageContent(job.Url);
+                var pageParser = new Pageparser(html);
 
-                if (selection.Hardcoded)
+                foreach (var selection in job.Selections)
                 {
-                    values = selection.Value.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
-                }
-                else
-                {
-                    values = pageParser.GetSelectionValues(selection.SearchPath);
-                }
+                    List<string> values;
 
-                if (!values.Any())
-                {
-                    continue;
-                }
-
-                foreach (var value in values)
-                {
-                    if (selection.Output == OutputType.Tag)
+                    if (selection.Hardcoded)
                     {
-                        tagRepository.AddOrUpdateTag(job.Url, selection.TagName, value, job.Replace);
+                        values = selection.Value.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
                     }
                     else
                     {
-                        jobRepository.RegisterAdhocJob(value, selection.JobName);
+                        values = pageParser.GetSelectionValues(selection.SearchPath);
+                    }
+
+                    if (!values.Any())
+                    {
+                        continue;
+                    }
+
+                    foreach (var value in values)
+                    {
+                        if (selection.Output == OutputType.Tag)
+                        {
+                            tagRepository.AddOrUpdateTag(job.Url, selection.TagName, value, job.Replace);
+                        }
+                        else
+                        {
+                            jobRepository.RegisterAdhocJob(value, selection.JobName);
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                logger.Error($"Job '{job.Name}' failed", ex);
             }
         }
 
@@ -79,7 +87,10 @@ namespace WebTagger.Webparsing
                     ProcessJob(job).Wait();
                 }
 
-
+                if (background)
+                {
+                    Task.Delay(configurationProvider.DelayBetweenJobCycle).Wait();
+                }
 
             } while (background);
         }

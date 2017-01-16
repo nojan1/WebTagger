@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
+using Newtonsoft.Json.Schema.Generation;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,32 +27,28 @@ namespace WebTagger.Jobs.Configuration
         public void AddConfigFile(string filename)
         {
             var configJson = File.ReadAllText(filename);
-            //var config = JObject.Parse(configJson);
+            var config = JObject.Parse(configJson);
+
+            var generator = new JSchemaGenerator();
+            generator.GenerationProviders.Add(new StringEnumGenerationProvider { CamelCaseText = true } );
+            var schema = generator.Generate(typeof(ConfigurationFileModel));
+
+            try
+            {
+                config.Validate(schema);
+            }
+            catch (JSchemaException ex)
+            {
+                throw new BadConfigurationException(ex);
+            }
 
             var model = JsonConvert.DeserializeObject<ConfigurationFileModel>(configJson);
             configJobs.AddRange(model.Jobs);
 
-            //try
-            //{
-
-            //}
-            //catch(Exception ex)
-            //{
-            //    var ex2 = new BadConfigurationException();
-
-            //    throw ex2;
-            //}
-
-            //if (IsValid(config))
-            //{
-            //    var model = config.ToObject<ConfigurationFileModel>();
-
-            //    configJobs.AddRange(model.Jobs);
-            //}
-            //else
-            //{
-
-            //}
+            if (!string.IsNullOrWhiteSpace(model.Interval))
+            {
+                DelayBetweenJobCycle = ConvertToTimeSpan(model.Interval);
+            }
         }
 
         public ICollection<Job> GetJobs()
@@ -59,16 +56,28 @@ namespace WebTagger.Jobs.Configuration
             return configJobs.ToList();
         }
 
-        //private bool IsValid(JObject configJson)
-        //{
-        //    //var schemaRaw = File.ReadAllText("Jobs/Configuration/configuration-schema.json");
-        //    //var schema = JsonSchema.Parse(schemaRaw);
+        private static TimeSpan ConvertToTimeSpan( string timeSpan)
+        {
+            var l = timeSpan.Length - 1;
+            var value = timeSpan.Substring(0, l);
+            var type = timeSpan.Substring(l, 1);
 
-        //    var generator = new JsonSchemaGenerator();
-        //    var schema = .Generate(typeof(ConfigurationFileModel));
-        //    return configJson.IsValid(schema);
-        //}
+            switch (type)
+            {
+                case "d": return TimeSpan.FromDays(double.Parse(value));
+                case "h": return TimeSpan.FromHours(double.Parse(value));
+                case "m": return TimeSpan.FromMinutes(double.Parse(value));
+                case "s": return TimeSpan.FromSeconds(double.Parse(value));
+                case "f": return TimeSpan.FromMilliseconds(double.Parse(value));
+                case "z": return TimeSpan.FromTicks(long.Parse(value));
+                default: return TimeSpan.FromDays(double.Parse(value));
+            }
+        }
+
     }
 
-    public class BadConfigurationException : Exception { }
+    public class BadConfigurationException : Exception
+    {
+        public BadConfigurationException(Exception innerException) : base(innerException.Message, innerException) { }
+    }
 }
