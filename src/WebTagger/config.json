@@ -1,0 +1,16 @@
+﻿{
+  "interval": "1m",
+  "jobs": [
+    {
+      "name": "test",
+      "url": "https://brax.nu/",
+      "selections": [
+        {
+          "output": "tag",
+          "tagname": "name",
+          "searchpath": "area a:href"
+        }
+      ]
+    }
+  ]
+}

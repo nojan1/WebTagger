@@ -1,7 +1,13 @@
 {
   "version": "1.0.0-*",
   "buildOptions": {
-    "emitEntryPoint": true
+    "emitEntryPoint": true,
+    "copyToOutput": {
+      "includeFiles": [
+        "Jobs/Configuration/configuration-schema.json",
+        "config.json"
+      ]
+    }
   },
 
   "dependencies": {
@@ -15,7 +21,7 @@
       "version": "1.0.1"
     },
     "Newtonsoft.Json": "9.0.1",
-"Newtonsoft.Json.Schema": "2.0.8"
+    "Newtonsoft.Json.Schema": "2.0.8"
   },
 
   "frameworks": {

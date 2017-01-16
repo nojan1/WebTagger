@@ -1,0 +1,54 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "interval": {
+      "type": "string",
+      "pattern": "[0-9]+[dhms]{1}"
+    },
+    "jobs": {
+      "title": "Job list",
+      "type": "array",
+      "items": {
+        "title": "Job",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "url": {
+            "type": "string",
+            "pattern": "https?://.*"
+          },
+          "selections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "output": {
+                  "type": "string",
+                  "enum": [ "tag", "url" ]
+                },
+                "hardcoded": {
+                  "type": "boolean",
+                  "default": "false"
+                },
+                "searchpath": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "tagname": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [ "output", "searchpath", "tagname" ]
+            }
+          }
+        },
+        "required": [ "name", "selections" ]
+      }
+    }
+  }
+}

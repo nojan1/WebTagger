@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WebTagger": {
+      "commandName": "Project",
+      "commandLineArgs": "-c config.json"
+    }
+  }
+}

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebTagger.Jobs;
+using WebTagger.Jobs.Configuration;
 using WebTagger.Webparsing;
 using Xunit;
 
@@ -22,19 +23,21 @@ namespace WebTagger.Tests
 
             var tagRepositoryMock = new Mock<ITagRepository>();
 
-            var jobProcessor = new JobProcessor(tagRepositoryMock.Object, jobRepositoryMock.Object, httpWrapperMock.Object);
+            var configurationMock = new Mock<IConfigurationProvider>();
+
+            var jobProcessor = new JobProcessor(tagRepositoryMock.Object, jobRepositoryMock.Object, httpWrapperMock.Object, configurationMock.Object);
             jobProcessor.ProcessJob(new Job
             {
-                name = "name",
-                url = "URL",
-                replace = true,
-                selections = new List<Selection>
+                Name = "name",
+                Url = "URL",
+                Replace = true,
+                Selections = new List<Selection>
                 {
                     new Selection
                     {
-                        output = OutputType.Tag,
-                        searchpath = "#templateInfo h2",
-                        tagname = "tagname"
+                        Output = OutputType.Tag,
+                        SearchPath = "#templateInfo h2",
+                        TagName = "tagname"
                     }
                 }
             }).Wait();
