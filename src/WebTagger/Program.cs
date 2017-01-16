@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebTagger.Jobs;
+using WebTagger.Jobs.Configuration;
 using WebTagger.Webparsing;
 
 namespace WebTagger
@@ -36,6 +37,9 @@ namespace WebTagger
             };
 
             var container = SetupIOC();
+
+            container.Resolve<ConfigurationProvider>().AddConfigFile("config.json");
+
             container.Resolve<JobProcessor>().ProcessJob(job).Wait();
         }
 
@@ -43,6 +47,7 @@ namespace WebTagger
         {
             var builder = new ContainerBuilder();
 
+            builder.RegisterType<ConfigurationProvider>().AsImplementedInterfaces();
             builder.RegisterType<JobRepository>().AsImplementedInterfaces();
             builder.RegisterType<TagRepository>().AsImplementedInterfaces();
             builder.RegisterType<HttpWrapper>().AsImplementedInterfaces();
