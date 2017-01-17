@@ -15,29 +15,6 @@ namespace WebTagger
     {
         public static void Main(string[] args)
         {
-            var job = new Job
-            {
-                Name = "test",
-                Url = "http://galaxen.com/restaurang/dagens-lunch/",
-                Selections = new List<Selection>
-                {
-                    new Selection
-                    {
-                        Output = OutputType.Tag,
-                        Hardcoded = false,
-                        TagName = "lunch",
-                        SearchPath = ".container .lunch-list li ul li"
-                    },
-                    new Selection
-                    {
-                        Output = OutputType.Tag,
-                        Hardcoded = false,
-                        TagName = "week",
-                        SearchPath = @".container h2 r:Matsedel&nbsp;(\w+)"
-                    }
-                }
-            };
-
             var arguments = ParseCommandLine(args);
             var container = SetupIOC();
 
@@ -47,7 +24,7 @@ namespace WebTagger
                 configProvider.AddConfigFile(config);
             }
 
-            container.Resolve<JobProcessor>().ProcessAllJobs(arguments.background);
+            container.Resolve<JobProcessor>().ProcessAllJobs(arguments.background).Wait();
         }
 
         private static IContainer SetupIOC()
@@ -75,11 +52,6 @@ namespace WebTagger
             parser.ParseCommandLine(args);
 
             return commandLineArgumets;
-        }
-
-        public static void SetupDB(string connectionString)
-        {
-            
         }
     }
 }

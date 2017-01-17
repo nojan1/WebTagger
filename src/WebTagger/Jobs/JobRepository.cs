@@ -17,14 +17,17 @@ namespace WebTagger.Jobs
             this.configurationProvider = configurationProvider;
         }
 
-        public ICollection<Job> Get()
+        public ICollection<Job> GetConfiguredJobs()
         {
-            var jobs = configurationProvider.GetJobs().ToList();
-            jobs.AddRange(AdHocJobs);
+            return configurationProvider.GetJobs().ToList();
+        }
 
+        public ICollection<Job> GetAdhocJobs()
+        {
+            var copy = AdHocJobs.ToList();
             AdHocJobs.Clear();
 
-            return jobs;
+            return copy;
         }
 
         public void RegisterAdhocJob(string url, string jobName)
@@ -35,8 +38,21 @@ namespace WebTagger.Jobs
             if (targetJob == null)
                 throw new Exception("No such job " + jobName);
 
-            targetJob.Url = url;
-            AdHocJobs.Add(targetJob);
+            AdHocJobs.Add(new Job
+            {
+                Url = url,
+                Name = targetJob.Name,
+                Replace = targetJob.Replace,
+                Selections = targetJob.Selections.Select(s => new Selection
+                {
+                    Hardcoded = s.Hardcoded,
+                    JobName = s.JobName,
+                    Output = s.Output,
+                    SearchPath = s.SearchPath,
+                    TagName = s.TagName,
+                    Value = s.Value
+                }).ToList()
+            });
         }
     }
 }

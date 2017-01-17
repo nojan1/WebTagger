@@ -12,7 +12,7 @@ namespace WebTagger.Webparsing
 {
     public class JobProcessor
     {
-        private static ILog logger = LogManager.GetLogger(typeof(JobProcessor)); 
+        private static ILog logger = LogManager.GetLogger(typeof(JobProcessor));
 
         private readonly ITagRepository tagRepository;
         private readonly IJobRepository jobRepository;
@@ -73,7 +73,16 @@ namespace WebTagger.Webparsing
                         }
                         else
                         {
-                            jobRepository.RegisterAdhocJob(value, selection.JobName);
+                            string url = value;
+
+                            Uri temp;
+
+                            if (!Uri.TryCreate(url, UriKind.Absolute, out temp))
+                            {
+                                url = new Uri(new Uri(job.Url), url).ToString();
+                            }
+
+                            jobRepository.RegisterAdhocJob(url, selection.JobName);
                         }
                     }
                 }
@@ -84,18 +93,25 @@ namespace WebTagger.Webparsing
             }
         }
 
-        public void ProcessAllJobs(bool background)
+        public async Task ProcessAllJobs(bool background)
         {
+            var jobList = jobRepository.GetConfiguredJobs();
+
             do
             {
-                foreach (var job in jobRepository.Get())
+                while (jobList.Any())
                 {
-                    ProcessJob(job).Wait();
+                    foreach (var job in jobList)
+                    {
+                        await ProcessJob(job);
+                    }
+
+                    jobList = jobRepository.GetAdhocJobs();
                 }
 
                 if (background)
                 {
-                    Task.Delay(configurationProvider.DelayBetweenJobCycle).Wait();
+                    await Task.Delay(configurationProvider.DelayBetweenJobCycle);
                 }
 
             } while (background);

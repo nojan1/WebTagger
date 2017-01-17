@@ -5,7 +5,8 @@ namespace WebTagger.Jobs
 {
     public interface IJobRepository
     {
-        ICollection<Job> Get();
+        ICollection<Job> GetConfiguredJobs();
+        ICollection<Job> GetAdhocJobs();
         void RegisterAdhocJob(string url, string jobName);
     }
 }

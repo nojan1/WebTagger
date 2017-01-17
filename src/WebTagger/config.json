@@ -2,15 +2,37 @@
   "connectionString": "Filename=./webtagger.db",
   "interval": "1m",
   "jobs": [
+    //{
+    //  "name": "test",
+    //  "url": "https://brax.nu/",
+    //  "replace": true,
+    //  "selections": [
+    //    {
+    //      "output": "tag",
+    //      "tagname": "name",
+    //      "searchpath": "area a:href"
+    //    }
+    //  ]
+    //},
     {
-      "name": "test",
-      "url": "https://brax.nu/",
+      "name": "test-url",
+      "url": "http://mikaelhummelgard.se/subindex.php?cat=1",
+      "selections": [
+        {
+          "output": "url",
+          "jobName": "test-url-worker",
+          "searchpath": "#Menu a a:href"
+        }
+      ]
+    },
+    {
+      "name": "test-url-worker",
       "replace": true,
       "selections": [
         {
           "output": "tag",
-          "tagname": "name",
-          "searchpath": "area a:href"
+          "tagname": "topic",
+          "searchpath": "h2"
         }
       ]
     }

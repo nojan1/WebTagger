@@ -26,7 +26,7 @@ namespace WebTagger.Configuration
         [MinLength(1)]
         public string SearchPath { get; set; }
 
-        [JsonProperty("tagname", Required = Required.Always)]
+        [JsonProperty("tagname", Required = Required.DisallowNull)]
         public string TagName { get; set; }
 
         [JsonProperty("hardcoded", Required = Required.DisallowNull)]
