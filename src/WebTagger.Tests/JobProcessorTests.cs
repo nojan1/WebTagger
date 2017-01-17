@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Moq;
+﻿using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +43,43 @@ namespace WebTagger.Tests
                 }
             }).Wait();
 
-            tagRepositoryMock.Verify(x => x.AddOrUpdateTag("URL", "tagname", "&nbsp;<!-- FREE WEBSITE TEMPLATES -->", true));
+            tagRepositoryMock.Verify(x => x.AddTag("URL", "tagname", "&nbsp;<!-- FREE WEBSITE TEMPLATES -->"));
+        }
+
+        [Fact]
+        public void AdHocJobsGetsCreatedFromUrls()
+        {
+            var httpWrapperMock = new Mock<IHttpWrapper>();
+            httpWrapperMock.Setup(x => x.GetPageContent(It.IsAny<string>()))
+                           .Returns(Task.FromResult(StaticWebPageContent.Html));
+
+            var callCount = 0;
+            var jobRepositoryMock = new Mock<IJobRepository>();
+            jobRepositoryMock.Setup(x => x.RegisterAdhocJob(It.IsAny<string>(), "whatever"))
+                             .Callback<string, string>((x1, x2) => { callCount++; });
+
+            var tagRepositoryMock = new Mock<ITagRepository>();
+
+            var configurationMock = new Mock<IConfigurationProvider>();
+
+            var jobProcessor = new JobProcessor(tagRepositoryMock.Object, jobRepositoryMock.Object, httpWrapperMock.Object, configurationMock.Object);
+            jobProcessor.ProcessJob(new Job
+            {
+                Name = "name",
+                Url = "URL",
+                Replace = true,
+                Selections = new List<Selection>
+                {
+                    new Selection
+                    {
+                        Output = OutputType.Url,
+                        SearchPath = "#navigation a a:href",
+                        JobName = "whatever"
+                    }
+                }
+            }).Wait();
+
+            Assert.Equal(5, callCount);
         }
     }
 }
