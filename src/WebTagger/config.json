@@ -1,5 +1,6 @@
 ﻿{
   "connectionString": "Filename=./webtagger.db",
+  "logConfigFilePath":  "log4net.xml",
   "interval": "1m",
   "jobs": [
     //{

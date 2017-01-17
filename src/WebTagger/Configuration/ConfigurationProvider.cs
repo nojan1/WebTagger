@@ -24,6 +24,8 @@ namespace WebTagger.Configuration
             get; private set;
         }
 
+        public string LogConfigFilePath { get; private set; }
+
         public string ConnectionString { get; private set; }
 
         public void AddConfigFile(string filename)
@@ -55,6 +57,11 @@ namespace WebTagger.Configuration
             if (!string.IsNullOrWhiteSpace(model.ConnectionString))
             {
                 ConnectionString = model.ConnectionString;
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.LogConfigFilePath))
+            {
+                LogConfigFilePath = model.LogConfigFilePath;
             }
         }
 

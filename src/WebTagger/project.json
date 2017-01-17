@@ -4,7 +4,8 @@
     "emitEntryPoint": true,
     "copyToOutput": {
       "includeFiles": [
-        "config.json"
+        "config.json",
+        "log4net.xml"
       ]
     }
   },

@@ -1,8 +1,13 @@
 ﻿using Autofac;
+using log4net;
+using log4net.Config;
+using log4net.Repository;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using WebTagger.Configuration;
 using WebTagger.Db;
@@ -24,7 +29,17 @@ namespace WebTagger
                 configProvider.AddConfigFile(config);
             }
 
+            ConfigureLogging(configProvider);
+
             container.Resolve<JobProcessor>().ProcessAllJobs(arguments.background).Wait();
+        }
+
+        private static void ConfigureLogging(IConfigurationProvider configProvider)
+        {
+            if (!string.IsNullOrWhiteSpace(configProvider.LogConfigFilePath))
+            {
+                XmlConfigurator.Configure(LogManager.GetRepository(Assembly.GetEntryAssembly()), new FileInfo(configProvider.LogConfigFilePath));
+            }
         }
 
         private static IContainer SetupIOC()

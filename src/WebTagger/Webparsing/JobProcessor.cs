@@ -34,6 +34,7 @@ namespace WebTagger.Webparsing
         {
             if (string.IsNullOrEmpty(job.Url))
             {
+                logger.Debug($"Job '{job.Name}' has no URL, ignoring");
                 return;
             }
 
@@ -62,6 +63,7 @@ namespace WebTagger.Webparsing
 
                     if (!values.Any())
                     {
+                        logger.Warn($"Job '{job.Name}' returned no values");
                         continue;
                     }
 
@@ -111,6 +113,7 @@ namespace WebTagger.Webparsing
 
                 if (background)
                 {
+                    logger.Debug($"Begin delay for {configurationProvider.DelayBetweenJobCycle}");
                     await Task.Delay(configurationProvider.DelayBetweenJobCycle);
                 }
 

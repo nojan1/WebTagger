@@ -12,6 +12,9 @@ namespace WebTagger.Configuration
         [JsonProperty("connectionString", Required = Required.DisallowNull)]
         public string ConnectionString { get; set; }
 
+        [JsonProperty("logconfigfilepath", Required = Required.DisallowNull)]
+        public string LogConfigFilePath { get; set; }
+
         [JsonProperty("interval", Required = Required.DisallowNull)]
         [RegularExpression("[0-9]+[dhms]{1}")]
         public string Interval { get; set; }
