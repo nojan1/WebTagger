@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebTagger.Configuration;
 
 namespace WebTagger.Db
 {
@@ -11,8 +12,11 @@ namespace WebTagger.Db
     {
         public ApplicationContext Create(DbContextFactoryOptions options)
         {
+            var configurationProvider = new ConfigurationProvider();
+            configurationProvider.AddConfigFile("config.json");
+
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>();
-            optionsBuilder.UseSqlite("Filename=./webtagger.db");
+            optionsBuilder.UseSqlite(configurationProvider.ConnectionString);
 
             return new ApplicationContext(optionsBuilder.Options);
         }
