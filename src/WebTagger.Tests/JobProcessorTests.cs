@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using WebTagger.Configuration;
 using WebTagger.Db;
 using WebTagger.Jobs;
+using WebTagger.Tests.Helpers;
 using WebTagger.Webparsing;
 using Xunit;
 
@@ -80,6 +81,99 @@ namespace WebTagger.Tests
             }).Wait();
 
             Assert.Equal(5, callCount);
+        }
+
+        [Fact]
+        public void JobCreatesTagInDatabase()
+        {
+            var job = new Job
+            {
+                Name = "name",
+                Url = "URL",
+                Replace = true,
+                Selections = new List<Selection>
+                {
+                    new Selection
+                    {
+                        Output = OutputType.Tag,
+                        SearchPath = "#templateInfo h2",
+                        TagName = "tagname"
+                    }
+                }
+            };
+
+            var httpWrapperMock = new Mock<IHttpWrapper>();
+            httpWrapperMock.Setup(x => x.GetPageContent(It.IsAny<string>()))
+                           .Returns(Task.FromResult(StaticWebPageContent.Html));
+
+            var jobRepositoryMock = new Mock<IJobRepository>();
+
+            var dbContextProvider = MockedDbContextFactory.GetMock();
+            var tagRepository = new TagRepository(dbContextProvider.Object);
+
+            var configurationMock = new Mock<IConfigurationProvider>();
+
+            var jobProcessor = new JobProcessor(tagRepository, jobRepositoryMock.Object, httpWrapperMock.Object, configurationMock.Object);
+
+            jobProcessor.ProcessJob(job).Wait();
+
+            using (var context = dbContextProvider.Object.GetContext())
+            {
+                Assert.Equal(1, context.Sites.Count());
+                Assert.Equal(1, context.Tags.Count());
+            }
+        }
+
+        [Fact]
+        public void ReplaceSettingWorksCorrectlyForTags()
+        {
+            var job = new Job
+            {
+                Name = "name",
+                Url = "URL",
+                Replace = true,
+                Selections = new List<Selection>
+                {
+                    new Selection
+                    {
+                        Output = OutputType.Tag,
+                        SearchPath = "#templateInfo h2",
+                        TagName = "tagname"
+                    }
+                }
+            };
+
+            var httpWrapperMock = new Mock<IHttpWrapper>();
+            httpWrapperMock.Setup(x => x.GetPageContent(It.IsAny<string>()))
+                           .Returns(Task.FromResult(StaticWebPageContent.Html));
+
+            var jobRepositoryMock = new Mock<IJobRepository>();
+
+            var dbContextProvider = MockedDbContextFactory.GetMock();
+            var tagRepository = new TagRepository(dbContextProvider.Object);
+
+            var configurationMock = new Mock<IConfigurationProvider>();
+
+            var jobProcessor = new JobProcessor(tagRepository, jobRepositoryMock.Object, httpWrapperMock.Object, configurationMock.Object);
+
+            jobProcessor.ProcessJob(job).Wait();
+
+            int tagId;
+            using (var context = dbContextProvider.Object.GetContext())
+            {
+                tagId = context.Tags.First().Id;
+            }
+
+            tagRepository.Clear("URL");
+
+            jobProcessor.ProcessJob(job).Wait();
+
+            using (var context = dbContextProvider.Object.GetContext())
+            {
+                Assert.Equal(1, context.Sites.Count());
+                Assert.Equal(1, context.Tags.Count());
+                Assert.True(context.Tags.First().Id > tagId);
+            }
         }
     }
 }

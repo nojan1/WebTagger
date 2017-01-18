@@ -97,10 +97,10 @@ namespace WebTagger.Webparsing
 
         public async Task ProcessAllJobs(bool background)
         {
-            var jobList = jobRepository.GetConfiguredJobs();
-
             do
             {
+                var jobList = jobRepository.GetConfiguredJobs();
+
                 while (jobList.Any())
                 {
                     foreach (var job in jobList)

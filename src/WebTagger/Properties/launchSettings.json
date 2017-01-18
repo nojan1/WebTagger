@@ -2,7 +2,7 @@
   "profiles": {
     "WebTagger": {
       "commandName": "Project",
-      "commandLineArgs": "-c config.json"
+      "commandLineArgs": "-d -c config.json"
     }
   }
 }
