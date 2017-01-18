@@ -48,6 +48,40 @@ namespace WebTagger.Tests
         }
 
         [Fact]
+        public void HardcodedValuesGetsAddedToRepository()
+        {
+            var httpWrapperMock = new Mock<IHttpWrapper>();
+            httpWrapperMock.Setup(x => x.GetPageContent(It.IsAny<string>()))
+                           .Returns(Task.FromResult(StaticWebPageContent.Html));
+
+            var jobRepositoryMock = new Mock<IJobRepository>();
+
+            var tagRepositoryMock = new Mock<ITagRepository>();
+
+            var configurationMock = new Mock<IConfigurationProvider>();
+
+            var jobProcessor = new JobProcessor(tagRepositoryMock.Object, jobRepositoryMock.Object, httpWrapperMock.Object, configurationMock.Object);
+            jobProcessor.ProcessJob(new Job
+            {
+                Name = "name",
+                Url = "URL",
+                Replace = true,
+                Selections = new List<Selection>
+                {
+                    new Selection
+                    {
+                        Output = OutputType.Tag,
+                        Hardcoded = true,
+                        TagName = "tagname",
+                        Value = "HardCodedValue"
+                    }
+                }
+            }).Wait();
+
+            tagRepositoryMock.Verify(x => x.AddTag("URL", "tagname", "HardCodedValue"));
+        }
+
+        [Fact]
         public void AdHocJobsGetsCreatedFromUrls()
         {
             var httpWrapperMock = new Mock<IHttpWrapper>();
