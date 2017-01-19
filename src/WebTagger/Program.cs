@@ -12,26 +12,46 @@ using System.Threading.Tasks;
 using WebTagger.Configuration;
 using WebTagger.Db;
 using WebTagger.Jobs;
+using WebTagger.Query;
 using WebTagger.Webparsing;
+using Autofac.Extensions.DependencyInjection;
 
 namespace WebTagger
 {
     public class Program
     {
+        public static IContainer ApplicationContainer;
+
         public static void Main(string[] args)
         {
             var arguments = ParseCommandLine(args);
-            var container = SetupIOC();
 
-            var configProvider = container.Resolve<IConfigurationProvider>();
-            foreach(var config in arguments.configurationFiles)
+            var configProvider = new ConfigurationProvider();
+            foreach (var config in arguments.configurationFiles)
             {
                 configProvider.AddConfigFile(config);
             }
 
+            var containerBuilder = SetupIOC(configProvider);
+
             ConfigureLogging(configProvider);
 
-            container.Resolve<JobProcessor>().ProcessAllJobs(arguments.background).Wait();
+            if (arguments.background)
+            {
+                QueryService.Init(configProvider, (services) =>
+                {
+                    containerBuilder.Populate(services);
+                    ApplicationContainer = containerBuilder.Build();
+
+                    return ApplicationContainer;
+                });
+            }
+            else
+            {
+                ApplicationContainer = containerBuilder.Build();
+            }
+
+            ApplicationContainer.Resolve<JobProcessor>().ProcessAllJobs(arguments.background).Wait();
         }
 
         private static void ConfigureLogging(IConfigurationProvider configProvider)
@@ -42,11 +62,11 @@ namespace WebTagger
             }
         }
 
-        private static IContainer SetupIOC()
+        private static ContainerBuilder SetupIOC(IConfigurationProvider configurationProvider)
         {
             var builder = new ContainerBuilder();
 
-            builder.RegisterType<ConfigurationProvider>().AsImplementedInterfaces().SingleInstance();
+            builder.Register<IConfigurationProvider>((context) => configurationProvider);
             builder.RegisterType<SqliteContextProvider>().AsImplementedInterfaces();
 
             builder.RegisterType<JobRepository>().AsImplementedInterfaces();
@@ -55,7 +75,7 @@ namespace WebTagger
 
             builder.RegisterType<JobProcessor>();
 
-            return builder.Build();
+            return builder;
         }
 
         private static CommandLineArguments ParseCommandLine(string[] args)

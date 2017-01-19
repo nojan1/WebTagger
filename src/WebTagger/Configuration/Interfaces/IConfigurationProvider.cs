@@ -5,6 +5,7 @@ namespace WebTagger.Configuration
 {
     public interface IConfigurationProvider
     {
+        string QueryServiceListenUrl { get; }
         string LogConfigFilePath { get; }
         TimeSpan DelayBetweenJobCycle { get;  }
         string ConnectionString { get; }

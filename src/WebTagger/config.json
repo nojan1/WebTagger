@@ -1,6 +1,7 @@
 ﻿{
+  "queryservicelistenurl": "http://localhost:9000",
   "connectionString": "Filename=./webtagger.db",
-  "logConfigFilePath":  "log4net.xml",
+  "logConfigFilePath": "log4net.xml",
   "interval": "1m",
   "jobs": [
     //{

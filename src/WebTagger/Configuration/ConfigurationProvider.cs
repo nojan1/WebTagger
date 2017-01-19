@@ -24,6 +24,8 @@ namespace WebTagger.Configuration
             get; private set;
         }
 
+        public string QueryServiceListenUrl { get; private set; }
+
         public string LogConfigFilePath { get; private set; }
 
         public string ConnectionString { get; private set; }
@@ -62,6 +64,11 @@ namespace WebTagger.Configuration
             if (!string.IsNullOrWhiteSpace(model.LogConfigFilePath))
             {
                 LogConfigFilePath = model.LogConfigFilePath;
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.QueryServiceListenUrl))
+            {
+                QueryServiceListenUrl = model.QueryServiceListenUrl;
             }
         }
 

@@ -12,6 +12,9 @@ namespace WebTagger.Configuration
         [JsonProperty("connectionString", Required = Required.DisallowNull)]
         public string ConnectionString { get; set; }
 
+        [JsonProperty("queryservicelistenurl", Required = Required.DisallowNull)]
+        public string QueryServiceListenUrl { get; set; }
+
         [JsonProperty("logconfigfilepath", Required = Required.DisallowNull)]
         public string LogConfigFilePath { get; set; }
 
