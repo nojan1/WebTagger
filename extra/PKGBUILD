@@ -2,7 +2,7 @@
 pkgname=webtagger-git
 pkgver=1.0
 pkgrel=1
-arch=(x86-64 x86)
+arch=(x86_64 x86)
 url="https://github.com/nojan1/WebTagger"
 license=('MIT')
 depends=(dotnet)
@@ -34,6 +34,7 @@ package() {
 	install -Dm644 extra/webtagger.service $pkgdir/usr/lib/systemd/system/
 	install -Dm644 extra/base-config.json $pkgdir/etc/webtagger/
 	echo {} > $pkgdir/etc/webtagger/jobs.json
+	install -Dm644 src/WebTagger/log4net.xml pkgdir/etc/webtagger/
 	
 	install -Dm755 extra/webtagger $pkgdir/usr/bin
 }
