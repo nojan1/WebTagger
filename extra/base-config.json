@@ -1,0 +1,6 @@
+{
+  "queryservicelistenurl": "http://localhost:9000",
+  "connectionString": "Filename=/usr/share/webtagger/webtagger.db",
+  "logConfigFilePath": "/etc/webtagger/log4net.xml",
+  "interval": "1h",
+}

@@ -1,0 +1,39 @@
+# Maintainer: Niklas Hedlund <nojan1989@gmail.com>
+pkgname=webtagger-git
+pkgver=1.0
+pkgrel=1
+arch=(x86-64 x86)
+url="https://github.com/nojan1/WebTagger"
+license=('MIT')
+depends=(dotnet)
+makedepends=()
+backup=()
+source=(https://github.com/nojan1/WebTagger.git)
+md5sums=('SKIP')
+
+framework=netcoreapp1.1
+
+pkgver() {
+  cd "$pkgname"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+	cd "$pkgname-$pkgver"
+	
+	cd src/WebTagger
+	dotnet restore
+	dotnet build -c Release -f $framework -o build
+}
+
+package() {
+	cd "$pkgname-$pkgver"
+	
+	install -Dm644 src/WebTagger/build/*.dll $pkgdir/usr/lib/webtagger/
+	
+	install -Dm644 extra/webtagger.service $pkgdir/usr/lib/systemd/system/
+	install -Dm644 extra/base-config.json $pkgdir/etc/webtagger/
+	echo {} > $pkgdir/etc/webtagger/jobs.json
+	
+	install -Dm755 extra/webtagger $pkgdir/usr/bin
+}
