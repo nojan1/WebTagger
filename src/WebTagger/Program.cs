@@ -71,6 +71,7 @@ namespace WebTagger
 
             builder.RegisterType<JobRepository>().AsImplementedInterfaces();
             builder.RegisterType<TagRepository>().AsImplementedInterfaces();
+            builder.RegisterType<SiteRepository>().AsImplementedInterfaces();
             builder.RegisterType<HttpWrapper>().AsImplementedInterfaces();
 
             builder.RegisterType<JobProcessor>();
