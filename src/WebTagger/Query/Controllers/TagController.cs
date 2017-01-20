@@ -4,26 +4,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebTagger.Db;
+using WebTagger.Query.Model;
 
 namespace WebTagger.Query.Controllers
 {
     [Route("api/tags")]
     public class TagController : Controller
     {
-        private readonly IDbContextProvider dbContextProvider;
+        private readonly ITagRepository tagRepository;
 
-        public TagController(IDbContextProvider dbContextProvider)
+        public TagController(ITagRepository tagRepository)
         {
-            this.dbContextProvider = dbContextProvider;
+            this.tagRepository = tagRepository;
         }
 
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<TagModel> Get()
         {
-            using(var context = dbContextProvider.GetContext())
-            {
-                return context.Tags.Select(t => $"{t.Name}=>{t.Value}").ToList();
-            }
+            return tagRepository.List()
+                                .Select(t => new TagModel { Name = t.Name, Value = t.Value })
+                                .ToList();
+        }
+
+        [HttpGet("search")]
+        public IEnumerable<SiteInfoWithTagsModel> Search(string q)
+        {
+            return tagRepository.SearchTags(q ?? "")
+                                .GroupBy(t => t.Site.Url)
+                                .Select(x => new SiteInfoWithTagsModel
+                                {
+                                    URL = x.Key,
+                                    Tags = x.Select(t => new TagModel { Name = t.Name, Value = t.Value }).ToList()
+                                }).ToList();
         }
     }
 }
