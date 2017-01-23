@@ -1,3 +1,3 @@
 #!/bin/bash
 
-exec dotnet /usr/lib/webtagger/WebTagger.dll $@
+exec dotnet /opt/webtagger/WebTagger.dll $@

@@ -12,11 +12,23 @@ namespace WebTagger.Db
     {
         public ApplicationContext Create(DbContextFactoryOptions options)
         {
-            var configurationProvider = new ConfigurationProvider();
-            configurationProvider.AddConfigFile("config.json");
+            string connectionString = "";
+
+            var location = Environment.GetEnvironmentVariable("DBLOCATION");
+            if (string.IsNullOrEmpty(location))
+            {
+                var configurationProvider = new ConfigurationProvider();
+                configurationProvider.AddConfigFile("config.json");
+
+                connectionString = configurationProvider.ConnectionString;
+            }
+            else
+            {
+                connectionString = $"Filename={location}";
+            }
 
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>();
-            optionsBuilder.UseSqlite(configurationProvider.ConnectionString);
+            optionsBuilder.UseSqlite(connectionString);
 
             return new ApplicationContext(optionsBuilder.Options);
         }

@@ -7,8 +7,8 @@ url="https://github.com/nojan1/WebTagger"
 license=('MIT')
 depends=(dotnet)
 makedepends=()
-backup=()
-source=(https://github.com/nojan1/WebTagger.git)
+backup=(etc/webtagger/jobs.json)
+source=($pkgname::git+https://github.com/nojan1/WebTagger.git)
 md5sums=('SKIP')
 
 framework=netcoreapp1.1
@@ -19,22 +19,32 @@ pkgver() {
 }
 
 build() {
-	cd "$pkgname-$pkgver"
+	cd "$pkgname"
 	
 	cd src/WebTagger
 	dotnet restore
 	dotnet build -c Release -f $framework -o build
+	
+	DBLOCATION=./webtagger.db dotnet ef database update
 }
 
 package() {
-	cd "$pkgname-$pkgver"
+	cd "$pkgname"
 	
-	install -Dm644 src/WebTagger/build/*.dll $pkgdir/usr/lib/webtagger/
+	mkdir -p $pkgdir/usr/lib/systemd/system/
+	install -m644 extra/webtagger.service $pkgdir/usr/lib/systemd/system/
 	
-	install -Dm644 extra/webtagger.service $pkgdir/usr/lib/systemd/system/
-	install -Dm644 extra/base-config.json $pkgdir/etc/webtagger/
+	mkdir -p $pkgdir/etc/webtagger/
+	install -m644 extra/base-config.json $pkgdir/etc/webtagger/
 	echo {} > $pkgdir/etc/webtagger/jobs.json
-	install -Dm644 src/WebTagger/log4net.xml pkgdir/etc/webtagger/
+	install -m644 src/WebTagger/log4net.xml $pkgdir/etc/webtagger/
 	
-	install -Dm755 extra/webtagger $pkgdir/usr/bin
+	mkdir -p $pkgdir/usr/bin
+	install -m755 extra/webtagger $pkgdir/usr/bin/
+	
+	mkdir -p $pkgdir/opt/webtagger
+	install -m644 src/WebTagger/build/* $pkgdir/opt/webtagger/
+	
+	mkdir -p $pkgdir/usr/share/webtagger/
+	install -m666 src/WebTagger/webtagger.db $pkgdir/usr/share/webtagger/webtagger.db 
 }
