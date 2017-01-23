@@ -49,7 +49,9 @@ namespace WebTagger.Configuration
             }
 
             var model = JsonConvert.DeserializeObject<ConfigurationFileModel>(configJson);
-            configJobs.AddRange(model.Jobs);
+
+            if(model.Jobs != null)
+                configJobs.AddRange(model.Jobs);
 
             if (!string.IsNullOrWhiteSpace(model.Interval))
             {
