@@ -38,7 +38,6 @@ namespace WebTagger.Query
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            Console.WriteLine("sdsadsad");
             loggerFactory.AddLog4Net();
 
             app.UseMvc();

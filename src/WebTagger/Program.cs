@@ -15,6 +15,7 @@ using WebTagger.Jobs;
 using WebTagger.Query;
 using WebTagger.Webparsing;
 using Autofac.Extensions.DependencyInjection;
+using CommandLineParser.Exceptions;
 
 namespace WebTagger
 {
@@ -24,6 +25,8 @@ namespace WebTagger
 
         public static void Main(string[] args)
         {
+            Console.WriteLine("Welcome to WebTagger!");
+
             var arguments = ParseCommandLine(args);
 
             var configProvider = new ConfigurationProvider();
@@ -85,7 +88,32 @@ namespace WebTagger
 
             var parser = new CommandLineParser.CommandLineParser();
             parser.ExtractArgumentAttributes(commandLineArgumets);
-            parser.ParseCommandLine(args);
+
+            parser.AcceptSlash = false;
+            parser.AcceptHyphen = true;
+            parser.AcceptEqualSignSyntaxForValueArguments = true;
+
+            try
+            {
+                parser.ParseCommandLine(args);
+
+                if (!parser.ParsingSucceeded)
+                {
+                    throw new Exception("Parsing failed");
+                }
+            }
+            catch (Exception ex)
+            {
+                parser.ShowUsage();
+                Console.WriteLine("Problem: " + ex.Message);
+                Environment.Exit(1);
+            }
+
+            if (commandLineArgumets.help)
+            {
+                parser.ShowUsage();
+                Environment.Exit(0);
+            }
 
             return commandLineArgumets;
         }
