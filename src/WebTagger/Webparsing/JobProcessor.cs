@@ -50,7 +50,7 @@ namespace WebTagger.Webparsing
 
                 if (!string.IsNullOrEmpty(job.Category))
                 {
-                    tagRepository.AddTag(job.Url, "category", job.Category);
+                    tagRepository.AddTag(job.Url, "category", job.Category, job.AccessLevel);
                 }
 
                 foreach (var selection in job.Selections)
@@ -76,7 +76,7 @@ namespace WebTagger.Webparsing
                     {
                         if (selection.Output == OutputType.Tag)
                         {
-                            tagRepository.AddTag(job.Url, selection.TagName, value);
+                            tagRepository.AddTag(job.Url, selection.TagName, value, job.AccessLevel);
                         }
                         else
                         {

@@ -10,5 +10,6 @@ namespace WebTagger.Db
         public int Id { get; set; }
         public string Url { get; set; }
         public ICollection<Tag> Tags { get; set; }
+        public int AccessLevel { get; set; }
     }
 }

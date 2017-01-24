@@ -14,11 +14,11 @@ namespace WebTagger.Db
             this.contextProvider = contextProvider;
         }
 
-        public ICollection<Site> List()
+        public ICollection<Site> List(int accessLevel)
         {
             using(var context = contextProvider.GetContext())
             {
-                return context.Sites.ToList();
+                return context.Sites.Where(s => s.AccessLevel <= accessLevel).ToList();
             }
         }
     }

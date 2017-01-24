@@ -19,7 +19,7 @@ namespace WebTagger.Tests
 
             var tagRepository = new TagRepository(dbContextProvider.Object);
 
-            tagRepository.AddTag("URL", "NAME", "VALUE");
+            tagRepository.AddTag("URL", "NAME", "VALUE", 1);
 
             using(var context = dbContextProvider.Object.GetContext())
             {
@@ -40,10 +40,10 @@ namespace WebTagger.Tests
 
             var tagRepository = new TagRepository(dbContextProvider.Object);
 
-            tagRepository.AddTag("URL", "NAME", "VALUE");
-            tagRepository.AddTag("URL", "NAME", "VALUE2");
-            tagRepository.AddTag("URL", "NAME", "VALUE3");
-            tagRepository.AddTag("URL", "NAME", "VALUE4");
+            tagRepository.AddTag("URL", "NAME", "VALUE", 1);
+            tagRepository.AddTag("URL", "NAME", "VALUE2", 1);
+            tagRepository.AddTag("URL", "NAME", "VALUE3", 1);
+            tagRepository.AddTag("URL", "NAME", "VALUE4", 1);
 
             tagRepository.Clear("URL");
 

@@ -44,7 +44,7 @@ namespace WebTagger.Tests
                 }
             }).Wait();
 
-            tagRepositoryMock.Verify(x => x.AddTag("URL", "tagname", "&nbsp;<!-- FREE WEBSITE TEMPLATES -->"));
+            tagRepositoryMock.Verify(x => x.AddTag("URL", "tagname", "&nbsp;<!-- FREE WEBSITE TEMPLATES -->", 1));
         }
 
         [Fact]
@@ -78,7 +78,7 @@ namespace WebTagger.Tests
                 }
             }).Wait();
 
-            tagRepositoryMock.Verify(x => x.AddTag("URL", "tagname", "HardCodedValue"));
+            tagRepositoryMock.Verify(x => x.AddTag("URL", "tagname", "HardCodedValue", 1));
         }
 
         [Fact]

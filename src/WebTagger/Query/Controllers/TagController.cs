@@ -3,17 +3,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebTagger.Configuration;
 using WebTagger.Db;
 using WebTagger.Query.Model;
 
 namespace WebTagger.Query.Controllers
 {
     [Route("api/tags")]
-    public class TagController : Controller
+    public class TagController : BaseController
     {
         private readonly ITagRepository tagRepository;
 
-        public TagController(ITagRepository tagRepository)
+        public TagController(ITagRepository tagRepository, IConfigurationProvider configurationProvider) : base(configurationProvider)
         {
             this.tagRepository = tagRepository;
         }
@@ -21,7 +22,7 @@ namespace WebTagger.Query.Controllers
         [HttpGet]
         public IEnumerable<TagModel> Get()
         {
-            return tagRepository.List()
+            return tagRepository.List(GetAccessLevel())
                                 .Select(t => new TagModel { Name = t.Name, Value = t.Value })
                                 .ToList();
         }
@@ -29,7 +30,7 @@ namespace WebTagger.Query.Controllers
         [HttpGet("search")]
         public IEnumerable<SiteInfoWithTagsModel> Search(string q)
         {
-            return tagRepository.SearchTags(q ?? "")
+            return tagRepository.SearchTags(q ?? "", GetAccessLevel())
                                 .GroupBy(t => t.Site.Url)
                                 .Select(x => new SiteInfoWithTagsModel
                                 {

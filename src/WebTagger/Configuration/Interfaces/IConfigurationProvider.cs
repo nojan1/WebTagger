@@ -11,5 +11,6 @@ namespace WebTagger.Configuration
         string ConnectionString { get; }
         void AddConfigFile(string filename);
         ICollection<Job> GetJobs();
+        ICollection<Client> GetClients();
     }
 }

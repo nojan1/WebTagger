@@ -4,6 +4,6 @@ namespace WebTagger.Db
 {
     public interface ISiteRepository
     {
-        ICollection<Site> List();
+        ICollection<Site> List(int accessLevel);
     }
 }

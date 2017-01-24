@@ -17,7 +17,7 @@ namespace WebTagger.Db
             this.contextProvider = contextProvider;
         }
 
-        public void AddTag(string url, string name, string value)
+        public void AddTag(string url, string name, string value, int accessLevel)
         {
             using (var context = contextProvider.GetContext())
             {
@@ -27,10 +27,15 @@ namespace WebTagger.Db
                     site = new Site
                     {
                         Url = url,
-                        Tags = new List<Tag>()
+                        Tags = new List<Tag>(),
+                        AccessLevel = accessLevel
                     };
 
                     context.Sites.Add(site);
+                }
+                else if (site.AccessLevel < accessLevel)
+                {
+                    site.AccessLevel = accessLevel;
                 }
 
                 site.Tags.Add(new Tag
@@ -63,22 +68,25 @@ namespace WebTagger.Db
             }
         }
 
-        public ICollection<Tag> List()
+        public ICollection<Tag> List(int accessLevel)
         {
             using (var context = contextProvider.GetContext())
             {
                 return context.Tags.Include(t => t.Site)
+                                   .Where(t => t.Site.AccessLevel <= accessLevel)
                                    .ToList();
             }
         }
 
-        public ICollection<Tag> SearchTags(string searchPhrase)
+        //TODO: Write tests for access level limitation
+        public ICollection<Tag> SearchTags(string searchPhrase, int accessLevel)
         {
             var searchModel = CreateSearchModel(searchPhrase);
 
             using (var context = contextProvider.GetContext())
             {
                 return context.Tags.Include(t => t.Site)
+                                   .Where(t => t.Site.AccessLevel <= accessLevel)
                                    .Where(t => SiteIsMatch(t.Site, searchModel))
                                    .Where(t => TagIsMatch(t, searchModel))
                                    .ToList();
@@ -90,7 +98,7 @@ namespace WebTagger.Db
             var searchModel = new SearchModel();
             var terms = searchPhrase.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
-            foreach(var keyValueString in terms.Where(t => t.Contains("=")).ToList())
+            foreach (var keyValueString in terms.Where(t => t.Contains("=")).ToList())
             {
                 var key = keyValueString.Substring(0, keyValueString.IndexOf('=')).ToLower();
                 var value = keyValueString.Substring(keyValueString.IndexOf('=') + 1).ToLower();
@@ -100,7 +108,7 @@ namespace WebTagger.Db
                 terms.RemoveAll(s => s == keyValueString);
             }
 
-            foreach(var not in terms.Where(t => t.StartsWith("-")).ToList())
+            foreach (var not in terms.Where(t => t.StartsWith("-")).ToList())
             {
                 searchModel.Not.Add(not.Substring(1).ToLower());
 
@@ -126,12 +134,13 @@ namespace WebTagger.Db
         private bool TagIsMatch(Tag tag, SearchModel searchModel)
         {
             if (searchModel.TagRequirments.ContainsKey(tag.Name.ToLower()) &&
-               !tag.Value.ToLower().Contains(searchModel.TagRequirments[tag.Name.ToLower()])){
+               !tag.Value.ToLower().Contains(searchModel.TagRequirments[tag.Name.ToLower()]))
+            {
 
                 return false;
             }
 
-            if(searchModel.Not.Any(n => tag.Value.ToLower().Contains(n)))
+            if (searchModel.Not.Any(n => tag.Value.ToLower().Contains(n)))
             {
                 return false;
             }
