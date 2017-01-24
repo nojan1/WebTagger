@@ -13,6 +13,7 @@ namespace WebTagger.Configuration
     public class ConfigurationProvider : IConfigurationProvider
     {
         private List<Job> configJobs = new List<Job>();
+        private List<Client> clients = new List<Client>();
 
         public ConfigurationProvider()
         {
@@ -53,6 +54,9 @@ namespace WebTagger.Configuration
             if(model.Jobs != null)
                 configJobs.AddRange(model.Jobs);
 
+            if (model.Clients != null)
+                clients.AddRange(model.Clients);
+
             if (!string.IsNullOrWhiteSpace(model.Interval))
             {
                 DelayBetweenJobCycle = ConvertToTimeSpan(model.Interval);
@@ -77,6 +81,11 @@ namespace WebTagger.Configuration
         public ICollection<Job> GetJobs()
         {
             return configJobs.ToList();
+        }
+
+        public ICollection<Client> GetClients()
+        {
+            return clients.ToList();
         }
 
         private static TimeSpan ConvertToTimeSpan( string timeSpan)

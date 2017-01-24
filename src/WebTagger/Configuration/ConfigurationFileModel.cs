@@ -9,7 +9,7 @@ namespace WebTagger.Configuration
 {
     public class ConfigurationFileModel
     {
-        [JsonProperty("connectionString", Required = Required.DisallowNull)]
+        [JsonProperty("connectionstring", Required = Required.DisallowNull)]
         public string ConnectionString { get; set; }
 
         [JsonProperty("queryservicelistenurl", Required = Required.DisallowNull)]
@@ -24,5 +24,8 @@ namespace WebTagger.Configuration
 
         [JsonProperty("jobs", Required = Required.DisallowNull)]
         public ICollection<Job> Jobs { get; set; }
+
+        [JsonProperty("clients", Required = Required.DisallowNull)]
+        public ICollection<Client> Clients { get; set; }
     }
 }

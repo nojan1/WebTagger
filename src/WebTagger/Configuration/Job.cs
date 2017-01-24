@@ -51,6 +51,12 @@ namespace WebTagger.Configuration
         [JsonProperty("replace", Required = Required.DisallowNull)]
         public bool Replace { get; set; }
 
+        [JsonProperty("authlevel", Required = Required.DisallowNull, DefaultValueHandling = DefaultValueHandling.Include)]
+        public int AuthLevel { get; set; } = 1;
+
+        [JsonProperty("category", Required = Required.DisallowNull)]
+        public string Category { get; set; }
+
         [JsonProperty("selections", Required = Required.Always)]
         public List<Selection> Selections { get; set; }
     }
