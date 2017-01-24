@@ -48,6 +48,11 @@ namespace WebTagger.Webparsing
                     tagRepository.Clear(job.Url);
                 }
 
+                if (!string.IsNullOrEmpty(job.Category))
+                {
+                    tagRepository.AddTag(job.Url, "category", job.Category);
+                }
+
                 foreach (var selection in job.Selections)
                 {
                     List<string> values;
