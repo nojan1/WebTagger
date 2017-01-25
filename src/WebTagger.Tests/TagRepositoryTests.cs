@@ -53,5 +53,41 @@ namespace WebTagger.Tests
                 Assert.Equal(0, context.Tags.Count());
             }
         }
+
+        [Fact]
+        public void ListingTagsRespectsAccessLevel()
+        {
+            var dbContextProvider = MockedDbContextFactory.GetMock();
+
+            var tagRepository = new TagRepository(dbContextProvider.Object);
+
+            tagRepository.AddTag("URL", "NAME", "VALUE", 1);
+            tagRepository.AddTag("URL", "NAME", "VALUE2", 2);
+            tagRepository.AddTag("URL2", "NAME", "VALUE3", 3);
+            tagRepository.AddTag("URL2", "NAME", "VALUE4", 4);
+
+            var tags = tagRepository.List(3);
+            Assert.Equal(2, tags.Count);
+            Assert.True(tags.Any(t => t.Value == "VALUE") &&
+                        tags.Any(t => t.Value == "VALUE2"));
+        }
+
+        [Fact]
+        public void SearchinTagsRespectsAccessLevel()
+        {
+            var dbContextProvider = MockedDbContextFactory.GetMock();
+
+            var tagRepository = new TagRepository(dbContextProvider.Object);
+
+            tagRepository.AddTag("URL", "NAME", "VALUE", 1);
+            tagRepository.AddTag("URL", "NAME", "VALUE2", 2);
+            tagRepository.AddTag("URL2", "NAME", "VALUE3", 3);
+            tagRepository.AddTag("URL2", "NAME", "VALUE4", 4);
+
+            var tags = tagRepository.SearchTags("a", 3);
+            Assert.Equal(2, tags.Count);
+            Assert.True(tags.Any(t => t.Value == "VALUE") &&
+                        tags.Any(t => t.Value == "VALUE2"));
+        }
     }
 }
