@@ -7,7 +7,7 @@ url="https://github.com/nojan1/WebTagger"
 license=('MIT')
 depends=(dotnet)
 makedepends=()
-backup=(etc/webtagger/jobs.json)
+backup=(etc/webtagger/1base.json etc/webtagger/2jobs.json etc/webtagger/3clients.json)
 source=($pkgname::git+https://github.com/nojan1/WebTagger.git)
 md5sums=('SKIP')
 
@@ -35,9 +35,10 @@ package() {
 	install -m644 extra/webtagger.service $pkgdir/usr/lib/systemd/system/
 	
 	mkdir -p $pkgdir/etc/webtagger/
-	install -m644 extra/base-config.json $pkgdir/etc/webtagger/
-	echo {} > $pkgdir/etc/webtagger/jobs.json
-	install -m644 src/WebTagger/log4net.xml $pkgdir/etc/webtagger/
+	install -m644 extra/1base.json $pkgdir/etc/webtagger/
+	echo '{"jobs":[]}' > $pkgdir/etc/webtagger/2jobs.json
+	echo '{"clients":[]}' > $pkgdir/etc/webtagger/3clients.json
+	install -m644 extra/log.xml $pkgdir/etc/webtagger/
 	
 	mkdir -p $pkgdir/usr/bin
 	install -m755 extra/webtagger $pkgdir/usr/bin/
