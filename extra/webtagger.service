@@ -3,7 +3,7 @@ Description=Webtagging service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/webtagger -d -c /etc/webtagger/base-config.json -c /etc/webtagger/jobs.json
+ExecStart=/usr/bin/webtagger -d -c /etc/webtagger/
 
 [Install]
 WantedBy=multi-user.target
