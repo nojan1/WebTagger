@@ -38,5 +38,13 @@
         }
       ]
     }
+  ],
+  "clients": [
+    {
+      "name": "test",
+      "clientid": "testid",
+      "clientkey": "testkey",
+      "authlevel":  4
+    }
   ]
 }
