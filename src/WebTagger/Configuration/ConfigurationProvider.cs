@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using log4net;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using Newtonsoft.Json.Schema.Generation;
@@ -12,6 +13,8 @@ namespace WebTagger.Configuration
 {
     public class ConfigurationProvider : IConfigurationProvider
     {
+        private static readonly ILog logger = LogManager.GetLogger(typeof(ConfigurationProvider));
+
         private List<Job> configJobs = new List<Job>();
         private List<Client> clients = new List<Client>();
 
@@ -33,11 +36,45 @@ namespace WebTagger.Configuration
 
         public void AddConfigFile(string filename)
         {
+            try
+            {
+                var attr = File.GetAttributes(filename);
+                if (attr.HasFlag(FileAttributes.Directory))
+                {
+                    var configFiles = Directory.GetFiles(filename, "*.json").OrderBy(s => s);
+                    foreach (var file in configFiles)
+                    {
+                        AddConfigFileImpl(Path.Combine(filename, file));
+                    }
+                }
+                else
+                {
+                    AddConfigFileImpl(filename);
+                }
+            }
+            catch
+            {
+                logger.Warn($"Config file error. No such file or directory: '{filename}'");
+            }
+        }
+
+        public ICollection<Job> GetJobs()
+        {
+            return configJobs.ToList();
+        }
+
+        public ICollection<Client> GetClients()
+        {
+            return clients.ToList();
+        }
+
+        private void AddConfigFileImpl(string filename)
+        {
             var configJson = File.ReadAllText(filename);
             var config = JObject.Parse(configJson);
 
             var generator = new JSchemaGenerator();
-            generator.GenerationProviders.Add(new StringEnumGenerationProvider { CamelCaseText = true } );
+            generator.GenerationProviders.Add(new StringEnumGenerationProvider { CamelCaseText = true });
             var schema = generator.Generate(typeof(ConfigurationFileModel));
 
             try
@@ -51,7 +88,7 @@ namespace WebTagger.Configuration
 
             var model = JsonConvert.DeserializeObject<ConfigurationFileModel>(configJson);
 
-            if(model.Jobs != null)
+            if (model.Jobs != null)
                 configJobs.AddRange(model.Jobs);
 
             if (model.Clients != null)
@@ -78,17 +115,7 @@ namespace WebTagger.Configuration
             }
         }
 
-        public ICollection<Job> GetJobs()
-        {
-            return configJobs.ToList();
-        }
-
-        public ICollection<Client> GetClients()
-        {
-            return clients.ToList();
-        }
-
-        private static TimeSpan ConvertToTimeSpan( string timeSpan)
+        private static TimeSpan ConvertToTimeSpan(string timeSpan)
         {
             var l = timeSpan.Length - 1;
             var value = timeSpan.Substring(0, l);
