@@ -2,6 +2,8 @@
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
@@ -21,8 +23,17 @@ namespace WebTagger.Query
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder => builder.AllowAnyOrigin());
+            });
+
             services.AddMvc();
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new CorsAuthorizationFilterFactory("AllowAllOrigins"));
+            });
 
             var container = RegisterServices?.Invoke(services);
             if (container != null)
@@ -40,6 +51,7 @@ namespace WebTagger.Query
         {
             loggerFactory.AddLog4Net();
 
+            app.UseCors("AllowAllOrigins");
             app.UseMvc();
         }
     }

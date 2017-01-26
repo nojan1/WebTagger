@@ -30,7 +30,7 @@ namespace WebTagger.Configuration
         public string TagName { get; set; }
 
         [JsonProperty("hardcoded", Required = Required.DisallowNull)]
-        public bool Hardcoded { get; set; };
+        public bool Hardcoded { get; set; }
 
         [JsonProperty("value", Required = Required.DisallowNull)]
         public string Value { get; set; }
