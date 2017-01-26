@@ -102,6 +102,8 @@ namespace WebTagger.Webparsing
 
         public async Task ProcessAllJobs(bool background)
         {
+            logger.Info($"Job processing started. Background work {(background ? "enabled" : "disabled")}");
+
             do
             {
                 var jobList = jobRepository.GetConfiguredJobs();

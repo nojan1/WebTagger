@@ -20,7 +20,7 @@ namespace WebTagger.Configuration
     {
         [JsonProperty("output", Required = Required.Always)]
         [JsonConverter(typeof(StringEnumConverter))]
-        public OutputType Output { get; set; }
+        public OutputType Output { get; set; } = OutputType.Tag;
 
         [JsonProperty("searchpath", Required = Required.Always)]
         [MinLength(1)]
@@ -30,7 +30,7 @@ namespace WebTagger.Configuration
         public string TagName { get; set; }
 
         [JsonProperty("hardcoded", Required = Required.DisallowNull)]
-        public bool Hardcoded { get; set; }
+        public bool Hardcoded { get; set; };
 
         [JsonProperty("value", Required = Required.DisallowNull)]
         public string Value { get; set; }
@@ -51,7 +51,7 @@ namespace WebTagger.Configuration
         [JsonProperty("replace", Required = Required.DisallowNull)]
         public bool Replace { get; set; }
 
-        [JsonProperty("acccesslevel", Required = Required.DisallowNull, DefaultValueHandling = DefaultValueHandling.Include)]
+        [JsonProperty("accesslevel", Required = Required.DisallowNull, DefaultValueHandling = DefaultValueHandling.Include)]
         public int AccessLevel { get; set; } = 1;
 
         [JsonProperty("category", Required = Required.DisallowNull)]

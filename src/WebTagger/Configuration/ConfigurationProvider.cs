@@ -44,7 +44,7 @@ namespace WebTagger.Configuration
                     var configFiles = Directory.GetFiles(filename, "*.json").OrderBy(s => s);
                     foreach (var file in configFiles)
                     {
-                        logger.Info($"Loading config file: '{file}'");
+                        Console.WriteLine($"Loading config file: '{file}'");
                         AddConfigFileImpl(Path.Combine(filename, file));
                     }
                 }
