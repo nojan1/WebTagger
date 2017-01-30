@@ -26,7 +26,9 @@ namespace WebTagger.Query
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAllOrigins",
-                    builder => builder.AllowAnyOrigin());
+                    builder => builder.AllowAnyOrigin()
+                                      .AllowAnyHeader()
+                                      .AllowAnyMethod());
             });
 
             services.AddMvc();
@@ -51,7 +53,6 @@ namespace WebTagger.Query
         {
             loggerFactory.AddLog4Net();
 
-            app.UseCors("AllowAllOrigins");
             app.UseMvc();
         }
     }
